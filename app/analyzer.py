@@ -43,7 +43,7 @@ def build_risk_flags(
         transactions: list[Transaction],
         summary: FinancialSummary
 ) -> list[RiskFlag]:
-    risk_flags: list[RiskFlag] = {}
+    risk_flags: list[RiskFlag] = []
 
     if any(contains_nsf_keywords(tx.description) for tx in transactions):
         risk_flags.append(

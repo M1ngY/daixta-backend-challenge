@@ -17,7 +17,7 @@ class Transaction(BaseModel):
         return cleaned
 
 class AnalyzeRequest(BaseModel):
-    transactions: List[transaction] = Field(..., min_length=1)
+    transactions: List[Transaction] = Field(..., min_length=1)
 
 class RiskFlag(BaseModel):
     code: str
