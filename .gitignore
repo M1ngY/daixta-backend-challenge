@@ -1,0 +1,31 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.local
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test and coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build and dist
+dist/
+build/
+*.egg-info/
+*.egg

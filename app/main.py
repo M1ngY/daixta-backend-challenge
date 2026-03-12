@@ -19,6 +19,7 @@ def root() -> RedirectResponse:
 def health_check() -> dict:
     return {"status": "ok"}
 
+
 @app.post("/analyze-file", response_model=AnalyzeResponse)
 def analyze_file(payload: AnalyzeRequest) -> AnalyzeResponse:
     return analyze_transactions(payload)

@@ -26,7 +26,8 @@ docker run -p 8000:8000 daixta-backend
 ### Tests
 
 ```bash
-pytest
+pip install -r requirements.txt   # includes pytest
+python -m pytest tests/ -v
 ```
 
 ---
@@ -58,7 +59,7 @@ pytest
 
 ### Data assumptions
 
-- **Amount sign**: Positive amounts are inflows; negative amounts are outflows. In the summary, `total_outflow` and `largest_outflow` use absolute values.
+- **Amount**: Stored and computed as `Decimal` for precision; NaN/Inf are rejected. Positive = inflow, negative = outflow. Summary fields use absolute values for outflows.
 - **Description**: Required, trimmed of leading/trailing whitespace, must be non-empty, max length 255; used for risk detection (e.g. NSF keywords).
 - **Date**: Stored as a transaction attribute only; the current logic does not sort by time or apply time-window analysis; all transactions contribute equally to aggregates and risk rules.
 
@@ -73,12 +74,14 @@ pytest
 
 ### Risk flag logic
 
+Business rules (NSF keywords, 40% threshold, min inflow count, etc.) are defined in `app/config.py` so they can be tuned without changing analyzer code.
+
 1. **NSF_ACTIVITY_DETECTED** (severity: high)  
-   Added if any transaction’s `description` (case-insensitive) contains `nsf`, `non-sufficient funds`, or `overdraft`.
+   Added if any transaction’s `description` (case-insensitive) contains any of the NSF keywords (see `app/config.py`).
 
 2. **LARGE_SINGLE_OUTFLOW**  
    - If there is any outflow and **no inflow at all**: add with severity high.  
-   - Otherwise, if **largest single outflow > 40% of total inflow**: add with severity medium.
+   - Otherwise, if **largest single outflow > configured ratio of total inflow** (default 40%): add with severity medium.
 
 3. **NEGATIVE_NET_CASH_FLOW** (high)  
    Added when net cash flow is negative (total outflow > total inflow).
